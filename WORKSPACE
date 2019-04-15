@@ -6,6 +6,11 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 #
 # Google libs
 #
+http_archive(
+    name = "com_github_gflags_gflags",
+    url = "https://github.com/gflags/gflags/archive/master.zip",
+    strip_prefix = "gflags-master",
+)
 
 http_archive(
     name = "com_github_google_absl",
@@ -14,21 +19,15 @@ http_archive(
 )
 
 http_archive(
-    name = "com_github_gflags_gflags",
-    url = "https://github.com/gflags/gflags/archive/master.zip",
-    strip_prefix = "gflags-master",
+    name = "com_github_google_benchmark",
+    url = "https://github.com/google/benchmark/archive/master.zip",
+    strip_prefix = "benchmark-master",
 )
 
 http_archive(
     name = "com_github_google_glog",
     url = "https://github.com/google/glog/archive/master.zip",
     strip_prefix = "glog-master",
-)
-
-http_archive(
-    name = "com_github_google_benchmark",
-    url = "https://github.com/google/benchmark/archive/master.zip",
-    strip_prefix = "benchmark-master",
 )
 
 http_archive(

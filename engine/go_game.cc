@@ -180,12 +180,12 @@ bool GoBoard::Move(GoPosition move, bool estimate_territory,
   for (GoChain* chain : opponents) {
     if (chain->liberties.size() == 1 && move == chain->FirstLiberty()) {
       // This move captures the chain.
-      opponents.erase(chain);
       RemoveChain(chain, captured_stones);
     } else {  // Update the liberties of the other opponents.
       chain->liberties.erase(move);
     }
   }
+  opponents.clear();
 
   // Merge neighbors or create a new chain.
   GoChain* new_chain = nullptr;

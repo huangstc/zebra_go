@@ -85,6 +85,20 @@ TEST_F(GoBoardTest, Basic) {
 
     LOG(INFO) << b->DebugString(true);
   }
+
+  // Case 4: a new chain is created with no initial liberties.
+  {
+    std::unique_ptr<GoBoard> b = original->Clone();
+    ASSERT_TRUE(b->Move({4, 2}, &deads));
+    EXPECT_TRUE(deads.empty());
+    ASSERT_TRUE(b->Move({0, 2}, &deads));
+    EXPECT_TRUE(deads.empty());
+
+    ASSERT_TRUE(b->Move({4, 0}, &deads));
+    ASSERT_EQ(3, deads.size());
+    const GoPosition expected[] = {{2,0}, {3,0}, {4,1}};
+    EXPECT_THAT(deads, UnorderedElementsAreArray(expected));
+  }
 }
 
 // https://www.101weiqi.com/book/1000/73/1344/
@@ -178,6 +192,20 @@ TEST_F(GoBoardTest, ForbiddenMoves2) {
   ASSERT_TRUE(board.Move({4, 1}, nullptr));
   ASSERT_EQ(COLOR_BLACK, board.current_player());
   EXPECT_FALSE(board.IsLegalMove({4,0}));
+}
+
+// Test the function ReplayGame in sgf_utils.
+TEST_F(GoBoardTest, ReplayGame) {
+  const std::string sgf = ReadFileToString("testdata/shusai_19000415.sgf");
+  ReplayGame(
+      sgf,
+      [](const ReplayContext& ctx) {
+        return ctx.board->width() == 19 && ctx.board->height() == 19;
+      },
+      [](const ReplayContext& ctx) {
+        LOG(INFO) << ctx.num_steps;
+      },
+      [](std::unique_ptr<GoBoard> board) {});
 }
 
 }  // namespace

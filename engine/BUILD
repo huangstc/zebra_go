@@ -18,7 +18,10 @@ cc_test(
       ":go_game",
       ":sgf_utils",
       "@com_github_google_googletest//:gtest_main",
-    ]
+    ],
+    data = [
+      "//testdata:sgf_files",
+    ],
 )
 
 cc_test(
@@ -45,5 +48,6 @@ cc_library(
       "@com_github_google_absl//absl/strings",
       "@com_github_google_glog//:glog",
       "@com_github_huangstc_sgf_lib//:sgf_parser",
-    ]
+    ],
+    visibility=["//visibility:public"],
 )
