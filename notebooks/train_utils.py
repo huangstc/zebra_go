@@ -28,9 +28,26 @@ def _reshape_planes(feature_dict, names):
 
 
 def ParseForPolicy(example):
+    """Parse an example for training the policy network.
+    """
     parsed = _parse_full_example(example)
     planes = _reshape_planes(parsed, ["orig", "b1", "b2", "b3", "w1", "w2", "w3"])
-    return tf.stack(planes, axis=2), parsed["next"]  # , parsed["outcome"]
+    return tf.stack(planes, axis=2), parsed["next"]
+
+
+def ParseForPolicyValue(example):
+    parsed = _parse_full_example(example)
+    planes = _reshape_planes(parsed, ["orig", "b1", "b2", "b3", "w1", "w2", "w3"])
+    return tf.stack(planes, axis=2), (parsed["next"], parsed["outcome"])
+
+
+def CreateDataset(files, batch_size):
+    # Also set in cc/gen_dataset.cc
+    dataset = tf.data.TFRecordDataset(files, "ZLIB")
+    dataset = dataset.map(ParseForPolicy)
+    dataset = dataset.repeat()
+    dataset = dataset.batch(batch_size)
+    return dataset
 
 
 def LabelToCoord(label):
@@ -50,3 +67,25 @@ def DrawGoBoard(plane):
             elif v < -0.5:
                 board.AddStone(x, y, -1)
     return board
+
+
+def TestExample(model, input_tensor):
+    feature_set = _parse_full_example(input_tensor)
+    print(feature_set["note"])
+    
+    planes, label = ParseForPolicy(input_tensor)
+    output = model(tf.reshape(planes, shape=(1,19,19,7)))
+    output_arr = output.numpy()  # shape=(1, 361)
+    top_10 = np.flip(output_arr[0,:].argsort()[-10:])
+    
+    bb = DrawGoBoard(planes.numpy()[:,:,0])
+    golden_x, golden_y = LabelToCoord(label)
+    print("Golden: (%d,%d)" % (golden_x, golden_y))
+
+    idx = 0
+    for p in top_10:
+        x, y = LabelToCoord(p)
+        bb.AddSquare(x, y, idx)
+        print("#" + str(idx) + ": (%d,%d) with score=%f" % (x, y, output_arr[0, p]))
+        idx += 1
+    return bb

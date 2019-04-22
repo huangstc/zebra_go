@@ -12,17 +12,20 @@ tensorflow::Tensor BatchGoFeatureSetsToTensor(
     const std::vector<const GoFeatureSet*>& feature_batch) {
   CHECK(!feature_batch.empty());
   const int num_examples = feature_batch.size();
-  const GoSizeT width = feature_batch[0]->width();
   const GoSizeT height = feature_batch[0]->height();
+  const GoSizeT width = feature_batch[0]->width();
   const auto num_channels = feature_batch[0]->num_planes();
-  tf::TensorShape shape({num_examples, width, height, num_channels});
+  tf::TensorShape shape({num_examples, height, width, num_channels});
   tensorflow::Tensor result(tf::DT_FLOAT, shape);
   auto tensor = result.tensor<float, 4>();
   for (int idx = 0; idx < num_examples; ++idx) {
+    CHECK_EQ(feature_batch[idx]->height(), height);
+    CHECK_EQ(feature_batch[idx]->width(), width);
+    CHECK_EQ(feature_batch[idx]->num_planes(), num_channels);
     for (int pid = 0; pid < num_channels; ++pid) {
       const auto& plane = feature_batch[idx]->plane(pid);
-      for (GoSizeT x = 0; x < width; ++x) {
-        for (GoSizeT y = 0; y < height; ++y) {
+      for (GoSizeT y = 0; y < height; ++y) {
+        for (GoSizeT x = 0; x < width; ++x) {
           tensor(idx, y, x, pid) = plane[y * width + x];
         }
       }

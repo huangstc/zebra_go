@@ -51,3 +51,24 @@ cc_library(
     ],
     visibility=["//visibility:public"],
 )
+
+cc_library(
+    name = "utils",
+    srcs = ["utils.cc"],
+    hdrs = ["utils.h"],
+    deps = [
+      "@com_github_google_absl//absl/synchronization",
+      "@com_github_google_glog//:glog",
+    ],
+    visibility=["//visibility:public"],
+)
+
+cc_test(
+    name = "utils_test",
+    srcs = ["utils_test.cc"],
+    deps = [
+      ":utils",
+      "@com_github_google_glog//:glog",
+      "@com_github_google_googletest//:gtest_main",
+    ],
+)

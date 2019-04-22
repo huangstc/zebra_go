@@ -16,7 +16,7 @@ First, run ```model/configure_tf.sh``` to build TensorFlow from source codes. So
 ```bash
 $ git clone https://github.com/huangstc/zebra_go.git
 $ cd zebra_go
-$ chmod u+x ./model/configure_tf.sh
+$ chmod +x ./model/configure_tf.sh
 $ ./model/configure_tf.sh
 ```
 
@@ -27,14 +27,14 @@ $ bazel build model:all
 ```
 
 ## Generate Training/Test Data
-The model is trained by human games. It is recommended to train it with professional or strong amateur players games. [Sensei's library](https://senseis.xmp.net/?GoDatabases) lists some databases of game records.
+The model is trained on human games. It is recommended to train it with professional or strong amateur players' games. [Sensei's library](https://senseis.xmp.net/?GoDatabases) lists some databases of Go game records.
 
 Assume you have collected some records in SGF format and put them in ```/tmp/training_sgf``` and ```/tmp/test_sgf``` respectively. Edit ```scripts/train.sh``` to set inputs and outputs:
 
 ```
 # Generate data sets from these SGF files.
 SGF_TRAINING="/tmp/training_sgf"
-SGF_TEST="`/tmp/test_sgf"
+SGF_TEST="/tmp/test_sgf"
 
 # Training data and test data will be written to these locations.
 TRAINING_RIO="/tmp/training_rio/data"
@@ -44,5 +44,31 @@ TEST_RIO="/tmp/test_rio/data"
 Then, run this command to build training data and test data from SGF files.
 ```bash
 $ chmod +x ./scripts/train.sh
-$ ./scripts/train.sh gen_datasets
+$ ./scripts/train.sh gen_data
+```
+
+## Train and Evaluation
+
+First of all, it is important to make sure that the version of TensorFlow used for training exactly matches the one linked to C++ binaries, otherwise the trained model may not be recognized by C++ binaries. The version for C++ is configured in `model/configure_tf.sh`.
+
+Then, set the following parameters in `scripts/train.sh`:
+
+```bash
+# Data sets output from previous step.
+TRAINING_RIO="/tmp/training_rio/data"
+TEST_RIO="/tmp/test_rio/data"
+
+NUM_EPOCHS=10
+RESUME_FROM=""  # If you need to resume from a trained model.
+TRAINED_MODEL="/tmp/models/`date "+%Y%m%d"`.h5"
+```
+
+Run the command to start training:
+```bash
+./scripts/train.sh train
+```
+
+After the training is done, run evaluation:
+```bash
+./scripts/train.sh eval
 ```

@@ -1,5 +1,7 @@
-/bazel-*
+*.h5
 *.pyc
+/bazel-*
+/checkpoints/
 /log/
 /model/tensorflow/
 /notebooks/.ipynb_checkpoints/

@@ -238,6 +238,12 @@ class GoFeatureSet {
 
   // Deep copy.
   void CopyFrom(const GoFeatureSet& other);
+  
+  std::unique_ptr<GoFeatureSet> Clone() const {
+    std::unique_ptr<GoFeatureSet> copy(new GoFeatureSet(width_, height_));
+    copy->CopyFrom(*this);
+    return copy;
+  }
 
   // Sets the value at (x,y) of a plane.
   void Set(int plane_id, GoSizeT x, GoSizeT y, float value) {

@@ -1,11 +1,5 @@
 // Generates training data set in TFRecord from SGF files.
 
-/*
-bazel-bin/model/gen_dataset  --examples_per_file=100000  \
-  --sgf_files="/path/to/your/sgf_files/*.sgf"            \
-  --output="/path/to/outputs/output-prefix"
-*/
-
 #include <string>
 
 #include "absl/strings/ascii.h"
@@ -56,9 +50,9 @@ int GameRecordToExamples(const string& sgf, const string& filename,
       [filename, examples, &num_new_examples](const ReplayContext& ctx) {
         if (ctx.num_steps < 3) return;
         tf::Example new_example;
-        float outcome = ctx.game_result;
+        float outcome = ctx.game_result > 0 ? 1 : 0;
         if (ctx.board->current_player() == COLOR_WHITE) {
-          outcome = -outcome;
+          outcome = 1 - outcome;
         }
         if (GoFeatureSetToExample(ctx.next_move, outcome,
                                   ctx.board->GetFeatures(), filename,

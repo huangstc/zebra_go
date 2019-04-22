@@ -46,6 +46,57 @@ cc_binary(
 )
 
 cc_library(
+    name = "tf_client",
+    srcs = ["tf_client.cc"],
+    hdrs = ["tf_client.h"],
+    deps = [
+      ":feature_converter",
+      ":tensorflow_dynamic",
+      "//engine:go_game",
+      "//engine:utils",
+      "@com_github_google_absl//absl/memory",
+      "@com_github_google_absl//absl/strings",
+      "@com_github_google_absl//absl/synchronization",
+      "@com_github_google_absl//absl/time",
+      "@com_github_google_glog//:glog",
+      "@com_github_gflags_gflags//:gflags",
+    ] + tf_absl_libs,
+    visibility=["//visibility:public"],
+)
+
+cc_test(
+  name = "tf_client_benchmark",
+  srcs = ["tf_client_benchmark.cc"],
+  deps = [
+    ":tf_client",
+    "//engine:go_game",
+    "//engine:sgf_utils",
+    "@com_github_google_googletest//:gtest_main",
+    "@com_github_google_benchmark//:benchmark_main",
+    "@com_github_huangstc_sgf_lib//:sgf_parser",
+  ],
+  data = [
+    "//testdata:sgf_files",
+    "//testdata:models",
+  ],
+)
+
+cc_binary(
+    name = "eval",
+    srcs = ["eval.cc"],
+    deps = [
+      ":tensorflow_dynamic",
+      ":tf_client",
+      "//engine:sgf_utils",
+      "//engine:utils",
+      "@com_github_gflags_gflags//:gflags",
+      "@com_github_google_absl//absl/memory",
+      "@com_github_google_absl//absl/strings",
+      "@com_github_google_glog//:glog",
+    ] + tf_absl_libs,
+)
+
+cc_library(
     name = "tensorflow_dynamic",
     srcs = [
         "tensorflow/libtensorflow_framework.so",
