@@ -1,0 +1,1 @@
+test --test_env=LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64

@@ -10,6 +10,26 @@ namespace {
 
 using ::testing::UnorderedElementsAreArray;
 
+TEST(SerializationTest, EncodeDecode) {
+  EXPECT_EQ("pass", ToString(kMovePass));
+  EXPECT_EQ("resign", ToString(kMoveResign));
+  EXPECT_EQ("A1", ToString(GoPosition({0,0})));
+  EXPECT_EQ("T19", ToString(GoPosition({18,18})));
+  EXPECT_EQ("J4", ToString(GoPosition({8,3})));
+  EXPECT_EQ("H16", ToString(GoPosition({7,15})));
+
+  EXPECT_EQ(kMovePass, PositionFromString("Pass"));
+  EXPECT_EQ(kMoveResign, PositionFromString("ResigN"));
+  EXPECT_EQ(GoPosition({0,0}), PositionFromString("a1"));
+  EXPECT_EQ(GoPosition({0,0}), PositionFromString("A1"));
+  EXPECT_EQ(GoPosition({8,3}), PositionFromString("j4"));
+  EXPECT_EQ(GoPosition({7,15}), PositionFromString("h16"));
+  EXPECT_EQ(GoPosition({18,18}), PositionFromString("T19"));
+
+  EXPECT_EQ(COLOR_BLACK, ColorFromString("b"));
+  EXPECT_EQ(COLOR_WHITE, ColorFromString("w"));
+}
+
 class GoBoardTest : public ::testing::Test {};
 
 TEST_F(GoBoardTest, Basic) {

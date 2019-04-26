@@ -1,4 +1,14 @@
 
+cc_binary(
+    name = "zebra_go",
+    srcs = ["zebra_go_main.cc"],
+    deps = [
+      ":engine",
+      ":go_game",
+      "@com_github_gflags_gflags//:gflags",
+      "@com_github_google_glog//:glog",
+    ]
+)
 cc_library(
     name = "go_game",
     srcs = ["go_game.cc"],
@@ -37,6 +47,39 @@ cc_test(
     data = [
       "//testdata:sgf_files",
     ],
+)
+
+cc_library(
+    name = "engine",
+    srcs = [
+      "go_engine.cc",
+      "scorer.cc",
+    ],
+    hdrs = [
+      "go_engine.h",
+      "scorer.h",
+    ],
+    deps = [
+      ":go_game",
+      ":utils",
+      "//model:tf_client",
+      "@com_github_gflags_gflags//:gflags",
+      "@com_github_google_absl//absl/memory",
+      "@com_github_google_absl//absl/strings",
+      "@com_github_google_absl//absl/synchronization",
+      "@com_github_google_absl//absl/time",
+      "@com_github_google_glog//:glog",
+    ]
+)
+
+cc_test(
+    name = "scorer_test",
+    srcs = ["scorer_test.cc"],
+    deps = [
+      ":engine",
+      "@com_github_google_glog//:glog",
+      "@com_github_google_googletest//:gtest_main",      
+    ]
 )
 
 cc_library(

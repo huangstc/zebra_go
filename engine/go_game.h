@@ -12,6 +12,9 @@
 
 #include <glog/logging.h>
 
+#include "absl/strings/str_join.h"
+#include "absl/strings/string_view.h"
+
 namespace zebra_go {
 
 // Color of a player, a stone or an area.
@@ -27,12 +30,28 @@ typedef int16_t GoSizeT;
 // Position.
 typedef std::pair<GoSizeT, GoSizeT> GoPosition;
 
+constexpr GoSizeT kMaxBoardSize = 25;
 constexpr GoPosition kNPos = {-1, -1};        // Not a valid position.
 constexpr GoPosition kMovePass = {-2, -2};    // A player passes.
 constexpr GoPosition kMoveResign = {-3, -3};  // A player resigns.
 
 // A1 to T19 in a 19*19 game. A1: lower left; T19: upper right.
 std::string ToString(GoPosition pos);
+GoPosition PositionFromString(absl::string_view s);
+
+std::string ToString(GoColor color);
+// "black" or "b" -> COLOR_BLACK, "white" or "w" -> COLOR_WHITE
+GoColor ColorFromString(absl::string_view s);
+
+template<typename ContainerT>
+std::string ToString(const ContainerT& stones) {
+  std::vector<std::string> stone_strs;
+  stone_strs.reserve(stones.size());
+  for (const GoPosition pos : stones) {
+    stone_strs.push_back(ToString(pos));
+  }
+  return absl::StrJoin(stone_strs, ",");
+}
 
 // Gets the color of the opponent of player "s".
 GoColor GetOpponent(GoColor s);
@@ -238,7 +257,7 @@ class GoFeatureSet {
 
   // Deep copy.
   void CopyFrom(const GoFeatureSet& other);
-  
+
   std::unique_ptr<GoFeatureSet> Clone() const {
     std::unique_ptr<GoFeatureSet> copy(new GoFeatureSet(width_, height_));
     copy->CopyFrom(*this);

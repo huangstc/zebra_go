@@ -2,11 +2,13 @@
 
 Yet another computer Go program.
 
+# Guide for Players and Developers
 ## Prerequisites
 
 The following packages and software are required to build and run this project:
 * [Bazel](https://github.com/bazelbuild/bazel)
-* [CUDA 10.0](https://developer.nvidia.com/cuda-10.0-download-archive).
+* [CUDA 10.0](https://developer.nvidia.com/cuda-10.0-download-archive)
+* [Sabaki](https://sabaki.yichuanshen.de/)
 
 Choose the CUDA version that is compatible with your TensorFlow version. For example, as of 2019/04/14, CUDA 10.1 is not officially supported by TensorFlow 1.13.1.
 
@@ -72,3 +74,27 @@ After the training is done, run evaluation:
 ```bash
 ./scripts/train.sh eval
 ```
+
+## Run
+
+You can play againt the program with [Sabaki](https://sabaki.yichuanshen.de/), using the trained model in `testdata/<yyyymmdd>.pb`. First, build the binary:
+
+```
+bazel build -c opt engine:zebra_go
+```
+
+And make sure `scripts/start.sh` is using the latest model:
+```bash
+MODEL="testdata/20190422.pb"
+INPUT_LAYER="go_input"
+OUTPUT_LAYER_PREFIX="go_output/"
+```
+
+Then add ZebraGo as an engine of Sakaki, with its path pointing to `/your/git/dir/zebra_go/scripts/start.sh`.
+
+# Acknowledgments
+
+The project uses codes or ideas from the following projects:
+* `model/configure_tf.sh` is copied from [MiniGo](https://github.com/tensorflow/minigo/blob/master/cc/configure_tensorflow.sh), with minor modifications.
+* `model/keras_to_tensorflow.py` is copied from [Keras to TensorFlow](https://github.com/amir-abdi/keras_to_tensorflow) authored by Amir H. Abdi.
+* Tencent's [PhoenixGo](https://github.com/Tencent/PhoenixGo) for connecting with Sabaki through Go Text Protocol.

@@ -4,6 +4,8 @@
 #include <string>
 
 #include "absl/memory/memory.h"
+#include "absl/strings/ascii.h"
+#include "absl/strings/numbers.h"
 #include "absl/strings/str_cat.h"
 
 namespace zebra_go {
@@ -22,6 +24,51 @@ std::string ToString(GoPosition pos) {
   if (pos.first == kMoveResign.first) return "resign";
   char label = (pos.first >= 8) ? 'A' + pos.first + 1 : 'A' + pos.first;
   return absl::StrCat(std::string(1, label), pos.second + 1);
+}
+
+GoPosition PositionFromString(absl::string_view input) {
+  std::string upper = absl::AsciiStrToLower(input);
+  absl::string_view s(upper);
+  if (s == "unset") {
+    return kNPos;
+  } else if (s == "pass") {
+    return kMovePass;
+  } else if (s == "resign") {
+    return kMoveResign;
+  }
+  GoPosition pos;
+  pos.first = (s[0] > 'i' ? s[0] - 'b' : s[0] - 'a');
+  if (pos.first < 0 || pos.first >= kMaxBoardSize) return kNPos;
+
+  int parsed = 0;
+  if (!absl::SimpleAtoi(s.substr(1), &parsed) || parsed <= 0 ||
+      parsed > kMaxBoardSize) {
+    return kNPos;
+  }
+  pos.second = parsed - 1;
+  return pos;
+}
+
+std::string ToString(GoColor color) {
+  switch (color) {
+    case COLOR_BLACK:
+      return "black";
+    case COLOR_WHITE:
+      return "white";
+    case COLOR_NONE:
+    default:
+      return "unknown";
+  }
+}
+
+GoColor ColorFromString(absl::string_view input) {
+  std::string s = absl::AsciiStrToLower(input);
+  if (s == "b" || s == "black") {
+    return COLOR_BLACK;
+  } else if (s == "w" || s == "white") {
+    return COLOR_WHITE;
+  }
+  return COLOR_NONE;
 }
 
 GoColor GetOpponent(GoColor s) {
@@ -493,11 +540,7 @@ std::string GoBoard::DebugString(bool output_chains) const {
 
   // Print forbidden positions:
   if (!forbidden_positions_.empty()) {
-    StrAppend(&ascii, "Forbidden: ");
-    for (GoPosition pos : forbidden_positions_) {
-      StrAppend(&ascii, ToString(pos), ", ");
-    }
-    StrAppend(&ascii, "\n");
+    StrAppend(&ascii, "Forbidden: ", ToString(forbidden_positions_), "\n");
   }
   return ascii;
 }
@@ -512,11 +555,8 @@ std::unique_ptr<GoBoard::GoChain> GoBoard::GoChain::Clone() const {
 std::string GoBoard::GoChain::DebugString() const {
   std::string ascii;
   StrAppend(&ascii, (color == COLOR_BLACK ? "Black" : "White"),
-            " Chain #", chain_id, ", #lib=", liberties.size(), ", Stones: ");
-  for (const auto& s : stones) {
-    StrAppend(&ascii, ToString(s), ", ");
-  }
-  StrAppend(&ascii, "\n");
+            " Chain #", chain_id, ", #lib=", liberties.size(), ", ");
+  StrAppend(&ascii, "Stones: ", ToString(stones ), "\n");
   return ascii;
 }
 

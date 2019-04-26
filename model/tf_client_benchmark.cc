@@ -10,7 +10,7 @@ namespace zebra_go {
 
 // Not really a good benchmark because TensorFlowClient runs asynchronously.
 static void BM_Inference(benchmark::State& state) {
-  const std::string model_file_path = "testdata/20190421.pb";
+  const std::string model_file_path = "testdata/20190422.pb";
   LOG(INFO) << "Load TF model from " << model_file_path;
 
   auto tf_client = TensorFlowClient::Create(
