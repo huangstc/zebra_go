@@ -29,10 +29,10 @@ class GtpServer {
   GtpServer() {
     if (FLAGS_simple_engine) {
       engine_.reset(new SimpleEngine());
-      engine_->SetBoardSize(19);
     } else {
-      LOG(FATAL) << "Not implemented.";
+      engine_.reset(new MctsEngine());
     }
+    engine_->SetBoardSize(19);
     RegisterHandlers();
   }
 

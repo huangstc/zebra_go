@@ -74,7 +74,6 @@ class TfScorer : public AsyncScorer {
   std::unique_ptr<TensorFlowClient> tf_client_;
 };
 
-
 }  // namespace zebra_go
 
 #endif  // ZEBRA_GO_ENGINE_SCORER_H_

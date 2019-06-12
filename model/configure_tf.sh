@@ -15,7 +15,7 @@ cc_opt_flags="${CC_OPT_FLAGS:--march=native}"
 export PYTHON_BIN_PATH="/usr/bin/python3"
 export PYTHON_LIB_PATH="/usr/lib/python3/dist-packages"
 export TF_NEED_CUDA=1
-export TF_CUDA_VERSION=10.1
+export TF_CUDA_VERSION=10.0
 export CUDA_TOOLKIT_PATH="/usr/local/cuda"
 export CUDNN_INSTALL_PATH="/usr/local/cuda"
 export TF_CUDNN_VERSION=7

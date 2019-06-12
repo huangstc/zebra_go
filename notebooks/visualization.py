@@ -62,7 +62,7 @@ class SvgGoBoard:
         py = self.MARGIN + y * self.GRID_SIZE
         fill = "yellow" if number >=0 else "pink"
         text = str(number) if number >= 0 else "G"
-        el = ET.SubElement(parent, "rect", x=str(px-8), y=str(py-8), width=str(16), height=str(16),
+        el = ET.SubElement(parent, "rect", x=str(px-8), y=str(py-8), width=str(15), height=str(15),
                            fill=fill)
         self.DrawText(parent, px-5, py+5, text)
         

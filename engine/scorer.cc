@@ -17,6 +17,9 @@ DEFINE_string(output_layer_prefix, "go_output/0", "");
 namespace zebra_go {
 namespace {
 
+// Keep top 20 candidate positions.
+static const int kMaxPolicyResults = 20;
+
 // To run ScoreGoState's callbacks.
 ThreadPool* GetScorerThreadPool() {
   static ThreadPool* g_thread_pool = new ThreadPool(3);
@@ -66,7 +69,7 @@ void ConvertToPolicyResult(const GoBoard& board,
   };
 
   // Selects top 20 legal positions with highest scores.
-  TopK<std::pair<GoPosition, float>, CompareSecond> top_k(20);
+  TopK<std::pair<GoPosition, float>, CompareSecond> top_k(kMaxPolicyResults);
   for (size_t i = 0; i < policy_output.size(); ++i) {
     GoPosition pos = board.Decode(i);
     if (board.IsLegalMove(pos)) {
@@ -108,8 +111,11 @@ std::string AsyncScorer::DebugString(const PolicyResult& policy_result) {
 }
 
 std::string AsyncScorer::DebugString(const ValueResult& p) {
-  return absl::StrCat("(Score: ", p.second, ", ",
-                      "should resign:", p.first, ")");
+  if (p.first) {
+    return absl::StrCat("(Score: ", p.second, ", should resign)");
+  } else {
+    return absl::StrCat("(Score: ", p.second, ")");
+  }
 }
 
 GoPosition AsyncScorer::SamplePolicy(const PolicyResult& policies) {

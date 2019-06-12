@@ -53,10 +53,12 @@ cc_library(
     name = "engine",
     srcs = [
       "go_engine.cc",
+      "mcts.cc",
       "scorer.cc",
     ],
     hdrs = [
       "go_engine.h",
+      "mcts.h",
       "scorer.h",
     ],
     deps = [
@@ -73,12 +75,21 @@ cc_library(
 )
 
 cc_test(
+    name = "mcts_test",
+    srcs = ["mcts_test.cc"],
+    deps = [
+      ":engine",
+      "@com_github_google_glog//:glog",
+      "@com_github_google_googletest//:gtest_main",
+    ]
+)
+cc_test(
     name = "scorer_test",
     srcs = ["scorer_test.cc"],
     deps = [
       ":engine",
       "@com_github_google_glog//:glog",
-      "@com_github_google_googletest//:gtest_main",      
+      "@com_github_google_googletest//:gtest_main",
     ]
 )
 

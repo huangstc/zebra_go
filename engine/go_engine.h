@@ -41,6 +41,18 @@ class SimpleEngine : public GoEngine {
   std::unique_ptr<AsyncScorer> scorer_;
 };
 
+// An engine using Monte Carlo tree search.
+class MctsEngine : public GoEngine {
+ public:
+  MctsEngine();
+  ~MctsEngine();
+
+  GoPosition GenMove(GoColor player) override;
+
+ private:
+  std::unique_ptr<AsyncScorer> scorer_;
+};
+
 }  // namespace zebra_go
 
 #endif  // ZEBRA_GO_ENGINE_GO_ENGINE_H_

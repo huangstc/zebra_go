@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Generate data sets from these SGF files.
-SGF_TRAINING="/home/tc/SGF/training/*/*.sgf"
-SGF_TEST="/home/tc/SGF/test/*/*.sgf"
+SGF_TRAINING="/home/tc/SGF/mini/training/*/*.sgf"
+SGF_TEST="/home/tc/SGF/mini/test/*/*.sgf"
 
 # Training data and test data will be written to these locations.
-TRAINING_RIO="/home/tc/SGF/rio/training/data"
-TEST_RIO="/home/tc/SGF/rio/test/data"
+TRAINING_RIO="/home/tc/SGF/mini/rio/training/data"
+TEST_RIO="/home/tc/SGF/mini/rio/test/data"
 
-NUM_EPOCHS=10
+NUM_EPOCHS=3
 RESUME_FROM=""
 TRAINED_MODEL="/home/tc/SGF/models/`date "+%Y%m%d"`.h5"
 
